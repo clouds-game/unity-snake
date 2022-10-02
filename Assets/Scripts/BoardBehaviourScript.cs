@@ -19,6 +19,22 @@ public class BoardBehaviourScript : MonoBehaviour {
 
   // Update is called once per frame
   void Update() {
+    if (transform.Find("Coin") == null) {
+      var baseObj = transform.Find("CoinBase");
+      var coin = Instantiate(baseObj, randomRange(), Quaternion.identity, transform);
+      coin.name = "Coin";
+      coin.gameObject.SetActive(true);
+    }
+  }
 
+  Vector3 randomRange() {
+    var box = this.GetComponent<BoxCollider2D>();
+    var bounds = box.bounds;
+    var point = new Vector3(
+      Random.Range(bounds.min.x, bounds.max.x),
+      Random.Range(bounds.min.y, bounds.max.y),
+      Random.Range(bounds.min.z, bounds.max.z)
+    );
+    return point;
   }
 }

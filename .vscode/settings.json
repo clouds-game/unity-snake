@@ -1,4 +1,9 @@
 {
+  "files.associations": {
+    "*.unity": "yaml",
+    "*.meta": "yaml",
+    "*.asset": "yaml",
+  },
   "editor.trimAutoWhitespace": false,
   "files.insertFinalNewline": false,
   "files.trimFinalNewlines": false,
