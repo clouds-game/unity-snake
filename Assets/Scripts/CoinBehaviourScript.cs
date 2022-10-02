@@ -15,6 +15,7 @@ public class CoinBehaviourScript : MonoBehaviour {
 
   void OnTriggerEnter2D(Collider2D other) {
     if (this.name != "CoinBase" && other.CompareTag("Player")) {
+      other.SendMessage("Eat");
       Destroy(this.gameObject);
     }
   }

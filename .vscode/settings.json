@@ -4,7 +4,9 @@
     "*.meta": "yaml",
     "*.asset": "yaml",
   },
-  "editor.trimAutoWhitespace": false,
-  "files.insertFinalNewline": false,
-  "files.trimFinalNewlines": false,
+  "[yaml]": {
+    "files.trimTrailingWhitespace": false,
+    "files.insertFinalNewline": false,
+    "files.trimFinalNewlines": false,
+  },
 }
