@@ -16,14 +16,13 @@ public class PlayerBehaviourScript : MonoBehaviour {
   // Update is called once per frame
   void Update() {
     var step = Time.deltaTime * 5.0f;
-    if (Input.GetKey("w")) {
-      transform.position += Vector3.up * step;
-    } else if (Input.GetKey("s")) {
-      transform.position += Vector3.down * step;
-    } else if (Input.GetKey("a")) {
-      transform.position += Vector3.left * step;
-    } else if (Input.GetKey("d")) {
-      transform.position += Vector3.right * step;
+    var direction = Vector3.zero;
+    if (Input.GetKey("w")) { direction += Vector3.up; }
+    if (Input.GetKey("s")) { direction += Vector3.down; }
+    if (Input.GetKey("a")) { direction += Vector3.left; }
+    if (Input.GetKey("d")) { direction += Vector3.right; }
+    if (direction != Vector3.zero) {
+      transform.position += direction.normalized * step;
     }
 
     if (body_length != 0 && bodies.Count == 0) {
@@ -33,7 +32,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
 
   void Expand() {
     var body_section = Instantiate(body_base, transform.position, Quaternion.identity, transform.parent);
-    body_section.GetComponent<SpriteRenderer>().color = Random.ColorHSV();
+    body_section.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0.2f, 0.4f, 0.5f, 1, 0.5f, 1);
     body_section.gameObject.name = "Body";
     body_section.gameObject.SetActive(true);
     if (bodies.First != null) {
