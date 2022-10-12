@@ -9,4 +9,5 @@
     "files.insertFinalNewline": false,
     "files.trimFinalNewlines": false,
   },
+  "omnisharp.useModernNet": false,
 }
