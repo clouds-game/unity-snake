@@ -9,10 +9,4 @@ public class BodyBehaviourScript : MonoBehaviour {
       this.gameObject.SetActive(false);
     }
   }
-
-  void OnTriggerExit2D(Collider2D other) {
-    if (other.CompareTag("Player")) {
-      other.SendMessage("Expand");
-    }
-  }
 }

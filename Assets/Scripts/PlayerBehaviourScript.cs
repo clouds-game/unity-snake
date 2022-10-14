@@ -5,29 +5,39 @@ using UnityEngine;
 public class PlayerBehaviourScript : MonoBehaviour {
   LinkedList<Transform> bodies = new LinkedList<Transform>();
   Transform body_base;
+  Rigidbody2D head;
   int body_length = 5;
 
   // Start is called before the first frame update
   void Start() {
     Debug.Log("Hello world");
     body_base = transform.Find("../BodyBase");
+    head = GetComponent<Rigidbody2D>();
   }
 
   // Update is called once per frame
   void Update() {
-    var step = Time.deltaTime * 5.0f;
+    var speed = 5.0f;
     var direction = Vector3.zero;
     if (Input.GetKey("w")) { direction += Vector3.up; }
     if (Input.GetKey("s")) { direction += Vector3.down; }
     if (Input.GetKey("a")) { direction += Vector3.left; }
     if (Input.GetKey("d")) { direction += Vector3.right; }
+    if (Input.GetKey(KeyCode.LeftShift)) { speed *= 2.0f; }
     if (direction != Vector3.zero) {
-      transform.position += direction.normalized * step;
+      direction = direction.normalized;
     }
+    head.velocity = direction.normalized * speed;
 
-    if (body_length != 0 && bodies.Count == 0) {
+    if (shouldExpand()) {
       Expand();
     }
+  }
+
+  bool shouldExpand() {
+    if (body_length == 0) { return false; }
+    if (bodies.Count == 0) { return true; }
+    return Vector3.Distance(transform.position, bodies.First.Value.position) >= 0.8f;
   }
 
   void Expand() {
