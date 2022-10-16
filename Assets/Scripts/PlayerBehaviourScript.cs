@@ -9,13 +9,17 @@ public class PlayerBehaviourScript : MonoBehaviour {
   Rigidbody2D head;
   int body_length = 5;
   int expanded = 0;
+  float last_expanded;
+  bool stuck = false;
+  float body_size = 0.3f;
 
   // Start is called before the first frame update
   void Start() {
     body_base = transform.Find("../BodyBase");
     board = transform.parent.parent;
-    Debug.Log($"Hello world {board}!");
+    Debug.Log($"Hello world {board}! now: {Time.time}");
     head = GetComponent<Rigidbody2D>();
+    resizeBody();
   }
 
   // Update is called once per frame
@@ -37,13 +41,30 @@ public class PlayerBehaviourScript : MonoBehaviour {
       Expand();
     }
 
+    if (!stuck && shouldStuck()) {
+      Debug.Log("maybe stucking...");
+    }
+
     checkSeason();
+  }
+
+  bool shouldStuck() {
+    if (stuck) return true;
+    if (last_expanded > 0 && Time.time - last_expanded > 3) {
+      stuck = true;
+    }
+    return stuck;
   }
 
   bool shouldExpand() {
     if (body_length == 0) { return false; }
     if (bodies.Count == 0) { return true; }
-    return Vector3.Distance(transform.position, bodies.First.Value.position) >= 0.8f;
+    return Vector3.Distance(transform.position, bodies.First.Value.position) >= 0.8f * body_size;
+  }
+
+  void resizeBody() {
+    transform.localScale = Vector3.one * body_size;
+    body_base.localScale = Vector3.one * body_size;
   }
 
   void Expand() {
@@ -61,6 +82,8 @@ public class PlayerBehaviourScript : MonoBehaviour {
       Destroy(body_last.gameObject);
     }
     expanded += 1;
+    last_expanded = Time.time;
+    stuck = false;
   }
 
   void Eat() {

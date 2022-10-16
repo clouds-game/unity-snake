@@ -10,11 +10,14 @@ enum Season {
 }
 
 public class BoardBehaviourScript : MonoBehaviour {
+  Camera mainCamera;
   Season season = Season.Spring;
 
   // Start is called before the first frame update
   void Start() {
+    mainCamera = Camera.allCameras[0];
     var box = this.GetComponent<BoxCollider2D>();
+    box.size = new Vector2(Screen.width * box.size.y / Screen.height, box.size.y);
     var edge = this.gameObject.AddComponent<EdgeCollider2D>();
     var bounds = box.bounds;
     edge.points = new Vector2[] {
@@ -51,14 +54,13 @@ public class BoardBehaviourScript : MonoBehaviour {
   void setSeason(Season season) {
     Debug.Log($"enter season {season}");
     this.season = season;
-    var camera = Camera.allCameras[0];
-    Debug.Log($"current color {camera.backgroundColor}");
+    Debug.Log($"current color {mainCamera.backgroundColor}");
     switch (season) {
-      case Season.Spring: camera.backgroundColor = Color.green; break;
-      case Season.Summer: camera.backgroundColor = Color.red; break;
-      case Season.Autumn: camera.backgroundColor = Color.yellow; break;
-      case Season.Winter: camera.backgroundColor = Color.gray; break;
-      default: camera.backgroundColor = Color.blue; break;
+      case Season.Spring: mainCamera.backgroundColor = Color.green; break;
+      case Season.Summer: mainCamera.backgroundColor = Color.red; break;
+      case Season.Autumn: mainCamera.backgroundColor = Color.yellow; break;
+      case Season.Winter: mainCamera.backgroundColor = Color.gray; break;
+      default: mainCamera.backgroundColor = Color.blue; break;
     }
 
   }
