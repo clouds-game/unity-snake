@@ -2,7 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+enum Season {
+  Spring,
+  Summer,
+  Autumn,
+  Winter,
+}
+
 public class BoardBehaviourScript : MonoBehaviour {
+  Season season = Season.Spring;
+
   // Start is called before the first frame update
   void Start() {
     var box = this.GetComponent<BoxCollider2D>();
@@ -15,6 +24,7 @@ public class BoardBehaviourScript : MonoBehaviour {
       new Vector2(bounds.max.x, bounds.min.y),
       new Vector2(bounds.min.x, bounds.min.y),
     };
+    setSeason(Season.Spring);
   }
 
   // Update is called once per frame
@@ -36,5 +46,20 @@ public class BoardBehaviourScript : MonoBehaviour {
       Random.Range(bounds.min.z, bounds.max.z)
     );
     return point;
+  }
+
+  void setSeason(Season season) {
+    Debug.Log($"enter season {season}");
+    this.season = season;
+    var camera = Camera.allCameras[0];
+    Debug.Log($"current color {camera.backgroundColor}");
+    switch (season) {
+      case Season.Spring: camera.backgroundColor = Color.green; break;
+      case Season.Summer: camera.backgroundColor = Color.red; break;
+      case Season.Autumn: camera.backgroundColor = Color.yellow; break;
+      case Season.Winter: camera.backgroundColor = Color.gray; break;
+      default: camera.backgroundColor = Color.blue; break;
+    }
+
   }
 }

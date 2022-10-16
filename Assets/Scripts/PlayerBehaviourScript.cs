@@ -5,13 +5,16 @@ using UnityEngine;
 public class PlayerBehaviourScript : MonoBehaviour {
   LinkedList<Transform> bodies = new LinkedList<Transform>();
   Transform body_base;
+  Transform board;
   Rigidbody2D head;
   int body_length = 5;
+  int expanded = 0;
 
   // Start is called before the first frame update
   void Start() {
-    Debug.Log("Hello world");
     body_base = transform.Find("../BodyBase");
+    board = transform.parent.parent;
+    Debug.Log($"Hello world {board}!");
     head = GetComponent<Rigidbody2D>();
   }
 
@@ -28,10 +31,13 @@ public class PlayerBehaviourScript : MonoBehaviour {
       direction = direction.normalized;
     }
     head.velocity = direction.normalized * speed;
+    head.angularVelocity = 0;
 
     if (shouldExpand()) {
       Expand();
     }
+
+    checkSeason();
   }
 
   bool shouldExpand() {
@@ -54,9 +60,30 @@ public class PlayerBehaviourScript : MonoBehaviour {
       bodies.RemoveLast();
       Destroy(body_last.gameObject);
     }
+    expanded += 1;
   }
 
   void Eat() {
     body_length += 1;
+  }
+
+  void checkSeason() {
+    const int baseLength = 100;
+    if (expanded == baseLength) {
+      board.SendMessage("setSeason", Season.Summer);
+      expanded += 1;
+    }
+    if (expanded == baseLength * 2) {
+      board.SendMessage("setSeason", Season.Autumn);
+      expanded += 1;
+    }
+    if (expanded == baseLength * 3) {
+      board.SendMessage("setSeason", Season.Winter);
+      expanded += 1;
+    }
+    if (expanded == baseLength * 4) {
+      board.SendMessage("setSeason", Season.Spring);
+      expanded = 0;
+    }
   }
 }
