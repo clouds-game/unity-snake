@@ -19,4 +19,11 @@ for n in filenames:
     f.write(data)
 
 # %%
+with open("index.html") as f:
+  index = f.read()
+for n in filenames:
+  index = index.replace(f"/{n}.br", f"/{n}")
+with open("index.html", "w") as f:
+  f.write(index)
+
 # %%
