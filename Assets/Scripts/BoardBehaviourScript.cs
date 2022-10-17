@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-enum Season {
+public enum Season {
   Spring,
   Summer,
   Autumn,
@@ -11,7 +11,8 @@ enum Season {
 
 public class BoardBehaviourScript : MonoBehaviour {
   Camera mainCamera;
-  Season season = Season.Spring;
+  public Season season = Season.Spring;
+  TextMesh seasonText;
 
   // Start is called before the first frame update
   void Start() {
@@ -56,11 +57,11 @@ public class BoardBehaviourScript : MonoBehaviour {
     this.season = season;
     Debug.Log($"current color {mainCamera.backgroundColor}");
     switch (season) {
-      case Season.Spring: mainCamera.backgroundColor = Color.green; break;
-      case Season.Summer: mainCamera.backgroundColor = Color.red; break;
-      case Season.Autumn: mainCamera.backgroundColor = Color.yellow; break;
-      case Season.Winter: mainCamera.backgroundColor = Color.gray; break;
-      default: mainCamera.backgroundColor = Color.blue; break;
+      case Season.Spring: mainCamera.backgroundColor = Color.green / 3; break;
+      case Season.Summer: mainCamera.backgroundColor = Color.red / 2; break;
+      case Season.Autumn: mainCamera.backgroundColor = Color.yellow / 2; break;
+      case Season.Winter: mainCamera.backgroundColor = Color.gray / 2; break;
+      default: mainCamera.backgroundColor = Color.blue / 2; break;
     }
 
   }
