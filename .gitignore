@@ -4,5 +4,8 @@
 /UserSettings/Layouts
 *.csproj
 *.sln
+.DS_Store
 /obj
 /build
+Assets/TextMesh Pro/Documentation
+Assets/TextMesh Pro/Documentation.meta
