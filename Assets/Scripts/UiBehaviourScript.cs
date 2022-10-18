@@ -15,6 +15,10 @@ public class UiBehaviourScript : MonoBehaviour {
 
   // Update is called once per frame
   void Update() {
-    seasonText.text = $"{board.season}";
+    if (board.win) {
+      seasonText.text = "Win";
+    } else {
+      seasonText.text = $"{board.season}";
+    }
   }
 }

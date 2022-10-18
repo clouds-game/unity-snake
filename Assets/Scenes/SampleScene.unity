@@ -1031,7 +1031,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af4f914b11a41c444b492c3112957354, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  season: 0
 --- !u!61 &1946667867
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1132,7 +1131,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 1, g: 1, b: 0, a: 1}
   m_FlipX: 0

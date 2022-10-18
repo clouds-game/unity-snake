@@ -11,7 +11,11 @@ public enum Season {
 
 public class BoardBehaviourScript : MonoBehaviour {
   Camera mainCamera;
-  public Season season = Season.Spring;
+  Season _season = Season.Spring;
+  int _year = 0;
+  public int year { get { return _year; } }
+  public Season season { get { return _season; } }
+  public bool win { get; set; }
   TextMesh seasonText;
 
   // Start is called before the first frame update
@@ -54,7 +58,10 @@ public class BoardBehaviourScript : MonoBehaviour {
 
   void setSeason(Season season) {
     Debug.Log($"enter season {season}");
-    this.season = season;
+    _season = season;
+    if (season == Season.Spring) {
+      _year += 1;
+    }
     Debug.Log($"current color {mainCamera.backgroundColor}");
     switch (season) {
       case Season.Spring: mainCamera.backgroundColor = Color.green / 3; break;
