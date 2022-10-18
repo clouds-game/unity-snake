@@ -14,7 +14,6 @@ public class PlayerBehaviourScript : MonoBehaviour {
   int season_expanded_start = 0;
   int expanded = 0;
   float last_expanded;
-  bool stuck = false;
   int reverse_count = 1;
   float body_size {
     get { return transform.localScale.x; }
@@ -68,7 +67,8 @@ public class PlayerBehaviourScript : MonoBehaviour {
       bodies.RemoveLast();
     }
 
-    if (!stuck && shouldStuck()) {
+    if (!board.stuck && shouldStuck()) {
+      board.stuck = true;
       Debug.Log("maybe stucking...");
     }
 
@@ -80,11 +80,11 @@ public class PlayerBehaviourScript : MonoBehaviour {
   }
 
   bool shouldStuck() {
-    if (stuck) return true;
+    if (board.stuck) return true;
     if (last_expanded > 0 && Time.time - last_expanded > 3) {
-      stuck = true;
+      board.stuck = true;
     }
-    return stuck;
+    return board.stuck;
   }
 
   bool shouldExpand() {
@@ -104,7 +104,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
     bodies.AddFirst(body_section);
     expanded += 1;
     last_expanded = Time.time;
-    stuck = false;
+    board.stuck = false;
   }
 
   void Eat() {

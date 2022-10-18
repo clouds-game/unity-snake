@@ -16,6 +16,7 @@ public class BoardBehaviourScript : MonoBehaviour {
   public int year { get { return _year; } }
   public Season season { get { return _season; } }
   public bool win { get; set; }
+  public bool stuck { get; set; }
   TextMesh seasonText;
 
   // Start is called before the first frame update
