@@ -15,6 +15,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
   int expanded = 0;
   float last_expanded;
   bool stuck = false;
+  int reverse_count = 1;
   float body_size {
     get { return transform.localScale.x; }
     set {
@@ -38,6 +39,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
   void Update() {
     var currentSpeed = speed;
     var direction = Vector3.zero;
+    if (Input.GetKeyDown("z") && reverseBody()) { return; }
     if (Input.GetKey("w")) { direction += Vector3.up; }
     if (Input.GetKey("s")) { direction += Vector3.down; }
     if (Input.GetKey("a")) { direction += Vector3.left; }
@@ -51,12 +53,19 @@ public class PlayerBehaviourScript : MonoBehaviour {
 
     if (shouldExpand()) {
       Expand();
-      if (board.season == Season.Autumn && season_not_eated >= body_length * 2 / 3) {
-        season_not_eated = 0;
+      if (board.season == Season.Autumn &&
+          ((body_length < 30 && season_not_eated >= 5) ||
+          (body_length >= 30 && season_not_eated >= body_length * 2 / 3))) {
         body_length += 1;
-      } else {
+        season_not_eated = 0;
+      }
+      if (bodies.Count > body_length) {
         season_not_eated += 1;
       }
+    }
+    while (bodies.Count > body_length && bodies.Count > 0) {
+      Destroy(bodies.Last.Value.gameObject);
+      bodies.RemoveLast();
     }
 
     if (!stuck && shouldStuck()) {
@@ -79,7 +88,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
   }
 
   bool shouldExpand() {
-    if (body_length == 0) { return false; }
+    if (body_length <= 0) { return false; }
     if (bodies.Count == 0) { return true; }
     return Vector3.Distance(transform.position, bodies.First.Value.position) >= 0.4f * (transform.localScale.x + bodies.First.Value.localScale.x);
   }
@@ -93,18 +102,13 @@ public class PlayerBehaviourScript : MonoBehaviour {
       bodies.First.Value.GetComponent<Collider2D>().isTrigger = false;
     }
     bodies.AddFirst(body_section);
-    while (bodies.Count > body_length) {
-      var body_last = bodies.Last.Value;
-      bodies.RemoveLast();
-      Destroy(body_last.gameObject);
-    }
     expanded += 1;
     last_expanded = Time.time;
     stuck = false;
   }
 
   void Eat() {
-    Debug.Log($"eat in {board.season}");
+    Debug.Log($"eat in {board.year} {board.season} (+{season_not_eated}={expanded-season_expanded_start}) => {body_length}");
     season_not_eated = 0;
     season_eated += 1;
     switch (board.season) {
@@ -120,7 +124,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
         if (speed < body_size * 15) {
           speed += 0.5f;
         }
-        goto default;
+        break;
       case Season.Winter:
         if (body_length > 0) {
           body_length -= 2;
@@ -130,6 +134,29 @@ public class PlayerBehaviourScript : MonoBehaviour {
         body_length += 1;
         break;
     }
+  }
+
+  bool reverseBody() {
+    if (bodies.Count == 0 || reverse_count == 0) {
+      return false;
+    }
+    reverse_count -= 1;
+    transform.position = bodies.Last.Value.position;
+    Destroy(bodies.Last.Value.gameObject);
+    bodies.RemoveLast();
+    if (bodies.First != null) {
+      bodies.First.Value.GetComponent<Collider2D>().isTrigger = true;
+    }
+    if (bodies.Last != null) {
+      bodies.Last.Value.GetComponent<Collider2D>().isTrigger = false;
+    }
+    var newList = new LinkedList<Transform>();
+    while (bodies.Count != 0) {
+      newList.AddFirst(bodies.First.Value);
+      bodies.RemoveFirst();
+    }
+    bodies = newList;
+    return true;
   }
 
   void checkSeason() {
@@ -151,6 +178,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
         nextSeason = Season.Winter;
         break;
       case Season.Winter:
+        season_expaned_max = 150;
         nextSeason = Season.Spring;
         break;
     }
