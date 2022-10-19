@@ -11,6 +11,7 @@ public enum Season {
 
 public class BoardBehaviourScript : MonoBehaviour {
   Camera mainCamera;
+  CoinBehaviourScript coinBase;
   Season _season = Season.Spring;
   int _year = 0;
   public int year { get { return _year; } }
@@ -33,14 +34,14 @@ public class BoardBehaviourScript : MonoBehaviour {
       new Vector2(bounds.max.x, bounds.min.y),
       new Vector2(bounds.min.x, bounds.min.y),
     };
+    coinBase = transform.Find("CoinBase").GetComponent<CoinBehaviourScript>();
     setSeason(Season.Spring);
   }
 
   // Update is called once per frame
   void Update() {
     if (transform.Find("Coin") == null) {
-      var baseObj = transform.Find("CoinBase");
-      var coin = Instantiate(baseObj, randomRange(), Quaternion.identity, transform);
+      var coin = Instantiate(coinBase.gameObject, randomRange(), Quaternion.identity, transform);
       coin.name = "Coin";
       coin.gameObject.SetActive(true);
     }
@@ -71,6 +72,6 @@ public class BoardBehaviourScript : MonoBehaviour {
       case Season.Winter: mainCamera.backgroundColor = Color.gray / 2; break;
       default: mainCamera.backgroundColor = Color.blue / 2; break;
     }
-
+    coinBase.season = season;
   }
 }
