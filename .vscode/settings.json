@@ -3,6 +3,7 @@
     "*.unity": "yaml",
     "*.meta": "yaml",
     "*.asset": "yaml",
+    "chinese.txt": "yaml",
   },
   "[yaml]": {
     "files.trimTrailingWhitespace": false,

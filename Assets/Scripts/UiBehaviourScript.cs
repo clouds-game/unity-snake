@@ -15,7 +15,7 @@ public class UiBehaviourScript : MonoBehaviour {
   // Start is called before the first frame update
   void Start() {
     board = GameObject.Find("/Border").GetComponent<BoardBehaviourScript>();
-    seasonText = GameObject.Find("Canvas/Season/Text").GetComponent<TextMeshProUGUI>();
+    // seasonText = GameObject.Find("Canvas/Season/Text").GetComponent<TextMeshProUGUI>();
     seasonIcons = Resources.LoadAll<Sprite>("season_icons");
     background = GameObject.Find("Background/Image").GetComponent<Image>();
     bgImages = new Sprite[] {
@@ -44,11 +44,11 @@ public class UiBehaviourScript : MonoBehaviour {
     //   popup.transform.Find("Hint").GetComponent<TextMeshProUGUI>().text = "press w/s/a/d to continue, space to restart";
     //   popup.SetActive(true);
     } else {
-      popup.SetActive(false);
+      // popup.SetActive(false);
     }
 
     // Season
-    seasonText.text = $"{board.season}";
+    // seasonText.text = $"{board.season}";
     switch (board.season) {
       case Season.Spring:
         GameObject.Find("Canvas/Season/Spring").GetComponent<Image>().sprite = seasonIcons[4];

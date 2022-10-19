@@ -122,12 +122,12 @@ TextureImporter:
       name: season_balls_0
       rect:
         serializedVersion: 2
-        x: 151
-        y: 1362
-        width: 100
-        height: 100
+        x: 140
+        y: 1344
+        width: 120
+        height: 120
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -143,12 +143,12 @@ TextureImporter:
       name: season_balls_1
       rect:
         serializedVersion: 2
-        x: 550
-        y: 1361
-        width: 100
-        height: 100
+        x: 540
+        y: 1344
+        width: 120
+        height: 120
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -164,12 +164,12 @@ TextureImporter:
       name: season_balls_2
       rect:
         serializedVersion: 2
-        x: 150
-        y: 954
-        width: 100
-        height: 100
+        x: 140
+        y: 944
+        width: 120
+        height: 120
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -185,12 +185,12 @@ TextureImporter:
       name: season_balls_3
       rect:
         serializedVersion: 2
-        x: 546
-        y: 957
-        width: 100
-        height: 100
+        x: 540
+        y: 944
+        width: 120
+        height: 120
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -206,12 +206,12 @@ TextureImporter:
       name: season_balls_4
       rect:
         serializedVersion: 2
-        x: 154
-        y: 556
-        width: 100
-        height: 100
-      alignment: 9
-      pivot: {x: 0.5000003, y: 0.5487091}
+        x: 140
+        y: 544
+        width: 120
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -227,12 +227,12 @@ TextureImporter:
       name: season_balls_5
       rect:
         serializedVersion: 2
-        x: 554
-        y: 556
-        width: 100
-        height: 100
+        x: 540
+        y: 544
+        width: 120
+        height: 120
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -248,12 +248,12 @@ TextureImporter:
       name: season_balls_6
       rect:
         serializedVersion: 2
-        x: 149
-        y: 149
-        width: 100
-        height: 100
+        x: 140
+        y: 144
+        width: 120
+        height: 120
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -269,12 +269,12 @@ TextureImporter:
       name: season_balls_7
       rect:
         serializedVersion: 2
-        x: 549
-        y: 143
-        width: 100
-        height: 100
+        x: 540
+        y: 144
+        width: 120
+        height: 120
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
