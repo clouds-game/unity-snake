@@ -4,6 +4,7 @@
 /UserSettings/Layouts
 *.csproj
 *.sln
+*.bak
 .DS_Store
 /obj
 /build

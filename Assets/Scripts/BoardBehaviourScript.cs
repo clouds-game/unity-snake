@@ -16,7 +16,9 @@ public class BoardBehaviourScript : MonoBehaviour {
   int _year = 0;
   public int year { get { return _year; } }
   public Season season { get { return _season; } }
+  public float season_progress { get; set; }
   public bool win { get; set; }
+  public int score { get; set; }
   bool _stuck;
   public bool stuck { get { return !win && _stuck; } set { _stuck = value; } }
   public bool moved { get; set; }

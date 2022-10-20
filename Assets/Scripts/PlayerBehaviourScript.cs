@@ -211,7 +211,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
     // joint.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0.2f, 0.4f, 0.5f, 1, 0.5f, 1);
     joint.gameObject.name = "Joint";
     joint.gameObject.SetActive(true);
-    if (bodies.First != null) {
+    if (bodies.First != null && !board.win) {
       bodies.First.Value.GetComponent<Collider2D>().isTrigger = false;
     }
     bodies.AddFirst(joint);
@@ -220,11 +220,11 @@ public class PlayerBehaviourScript : MonoBehaviour {
     board.stuck = false;
   }
 
-  void Eat() {
-    Debug.Log($"eat in {board.year} {board.season} (+{season_not_eated}={expanded-season_expanded_start}) => {body_length}");
+  void Eat(Season season) {
+    Debug.Log($"eat in {board.year} {season} (+{season_not_eated}={expanded-season_expanded_start}) => {body_length}");
     season_not_eated = 0;
     season_eated += 1;
-    switch (board.season) {
+    switch (season) {
       case Season.Spring:
         goto default;
       case Season.Summer:
@@ -237,13 +237,16 @@ public class PlayerBehaviourScript : MonoBehaviour {
         if (speed < body_size * 15) {
           speed += 0.5f;
         }
+        board.score += 2;
         break;
       case Season.Winter:
         if (body_length > 0) {
           body_length -= 2;
         }
+        board.score -= 1;
         break;
       default:
+        board.score += 1;
         body_length += 1;
         break;
     }
@@ -260,7 +263,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
     if (bodies.First != null) {
       bodies.First.Value.GetComponent<Collider2D>().isTrigger = true;
     }
-    if (bodies.Last != null) {
+    if (bodies.Last != null && !board.win) {
       bodies.Last.Value.GetComponent<Collider2D>().isTrigger = false;
     }
     var newList = new LinkedList<Transform>();
@@ -302,6 +305,16 @@ public class PlayerBehaviourScript : MonoBehaviour {
       season_not_eated = 0;
       season_expanded_start = expanded;
       season_length_start = body_length;
+      board.season_progress = 0.0f;
+    } else {
+      var season_progress = 0.0f;
+      if (season_eated_max > 0) {
+        season_progress = Mathf.Max(season_progress, (float)season_eated/season_eated_max);
+      }
+      if (season_expaned_max > 0) {
+        season_progress = Mathf.Max(season_progress, (float)(expanded - season_expanded_start)/season_expaned_max);
+      }
+      board.season_progress = season_progress;
     }
   }
 }

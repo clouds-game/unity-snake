@@ -8,9 +8,11 @@ using TMPro;
 public class UiBehaviourScript : MonoBehaviour {
   BoardBehaviourScript board;
   TextMeshProUGUI tips;
+  TextMeshProUGUI score;
   Sprite[] seasonIcons;
   Image background;
   Sprite[] bgImages;
+  Slider progress;
   GameObject popup;
   GameObject dialog;
   float playing_end;
@@ -73,7 +75,10 @@ public class UiBehaviourScript : MonoBehaviour {
     };
     popup = GameObject.Find("Canvas/Popup"); popup.SetActive(false);
     dialog = GameObject.Find("Canvas/Dialog"); dialog.SetActive(false);
+    progress = GameObject.Find("Canvas/Season/Progress").GetComponent<Slider>();
+    score = GameObject.Find("Canvas/Score").GetComponent<TextMeshProUGUI>();
     audioSource = GetComponent<AudioSource>();
+    audioSource.volume = 0.03f;
     audioClips = new AudioClip[] {
       Resources.Load<AudioClip>("Audio/dialog0"),
       Resources.Load<AudioClip>("Audio/dialog1"),
@@ -112,8 +117,7 @@ public class UiBehaviourScript : MonoBehaviour {
     checkPlaying();
 
     if (board.win) {
-      popup.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui_win");
-      popup.SetActive(true);
+      showPopup(Resources.Load<Sprite>("ui_win"));
       if (board.season == Season.Spring) {
         playDialog(new int[] { 20 });
       } else {
@@ -122,10 +126,9 @@ public class UiBehaviourScript : MonoBehaviour {
     } else if (board.stuck) {
       playDialog(new int[] { 10 });
       if (played.Contains(10) && playing_end <= Time.time) {
-        popup.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui_lose");
+        showPopup(Resources.Load<Sprite>("ui_lose"));
         played.Remove(21);
         playDialog(new int[] { 18 });
-        popup.SetActive(true);
       }
     } else {
       if (played.Contains(18)) {
@@ -141,6 +144,7 @@ public class UiBehaviourScript : MonoBehaviour {
       Debug.Log("win immediately");
       board.win = !board.win;
     }
+    score.text = $"{board.score}";
 
     // tips
     var tipsText = "";
@@ -187,11 +191,13 @@ public class UiBehaviourScript : MonoBehaviour {
         GameObject.Find("Canvas/Season/Spring").GetComponent<Image>().sprite = seasonIcons[4];
         background.sprite = bgImages[0];
         playBGM(bgmClips[0]);
+        progress.value = board.season_progress / 3;
         if (board.year == 1) playDialog(new int[] { 0, 1 });
         if (board.year == 2) playDialog(new int[] { 9 });
         break;
       case Season.Summer:
         GameObject.Find("Canvas/Season/Summer").GetComponent<Image>().sprite = seasonIcons[5];
+        progress.value = (board.season_progress + 1) / 3;
         background.sprite = bgImages[1];
         playBGM(bgmClips[1]);
         if (board.year == 1) playDialog(new int[] { 2, 3 });
@@ -199,6 +205,7 @@ public class UiBehaviourScript : MonoBehaviour {
         break;
       case Season.Autumn:
         GameObject.Find("Canvas/Season/Autumn").GetComponent<Image>().sprite = seasonIcons[6];
+        progress.value = (board.season_progress + 2) / 3;
         background.sprite = bgImages[2];
         playBGM(bgmClips[2]);
         if (board.year == 1) playDialog(new int[] { 4, 5, 6 });
@@ -207,6 +214,7 @@ public class UiBehaviourScript : MonoBehaviour {
         break;
       case Season.Winter:
         GameObject.Find("Canvas/Season/Winter").GetComponent<Image>().sprite = seasonIcons[7];
+        progress.value = 1 - board.season_progress;
         background.sprite = bgImages[3];
         playBGM(bgmClips[3]);
         if (board.year == 1) playDialog(new int[] { 7, 8 });
@@ -221,6 +229,13 @@ public class UiBehaviourScript : MonoBehaviour {
         SceneManager.LoadScene("SampleScene");
       }
     }
+  }
+
+  void showPopup(Sprite sprite) {
+    var image = popup.GetComponent<Image>();
+    image.color = Color.white;
+    image.sprite = sprite;
+    popup.SetActive(true);
   }
 
   void playBGM(AudioClip clip) {
