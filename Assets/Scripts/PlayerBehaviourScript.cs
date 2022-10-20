@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class PlayerBehaviourScript : MonoBehaviour {
   LinkedList<Transform> bodies = new LinkedList<Transform>();
-  Transform body_base;
+  Transform joint_base;
+  LineRenderer body_renderer;
+  AnimationCurve body_width_curve = new AnimationCurve();
+  Vector3[] body_points = new Vector3[] {};
   BoardBehaviourScript board;
   Rigidbody2D head;
+  Vector3 last_head;
   int body_length = 5;
   int season_length_start = 5;
   int season_eated = 0;
@@ -19,15 +23,16 @@ public class PlayerBehaviourScript : MonoBehaviour {
     get { return transform.localScale.x; }
     set {
       transform.localScale = Vector3.one * value;
-      if (body_base != null)
-        body_base.localScale = Vector3.one * value;
+      if (joint_base != null)
+        joint_base.localScale = Vector3.one * value;
     }
   }
   float speed = 5.0f;
 
   // Start is called before the first frame update
   void Start() {
-    body_base = transform.Find("../BodyBase");
+    joint_base = transform.parent.Find("JointBase"); joint_base.gameObject.SetActive(false);
+    body_renderer = transform.parent.Find("Body").GetComponent<LineRenderer>();
     board = transform.parent.parent.gameObject.GetComponent<BoardBehaviourScript>();
     Debug.Log($"Hello world {board}! now: {Time.time}");
     head = GetComponent<Rigidbody2D>();
@@ -36,6 +41,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
 
   // Update is called once per frame
   void Update() {
+    bool shouldUpdate = false;
     var currentSpeed = speed;
     var direction = Vector3.zero;
     if (Input.GetKeyDown("z") && reverseBody()) { return; }
@@ -49,8 +55,13 @@ public class PlayerBehaviourScript : MonoBehaviour {
     }
     head.velocity = direction.normalized * currentSpeed;
     head.angularVelocity = 0;
+    if (Vector3.Distance(transform.position, last_head) > 0.2) {
+      shouldUpdate = true;
+      last_head = transform.position;
+    }
 
     if (shouldExpand()) {
+      shouldUpdate = true;
       Expand();
       if (board.season == Season.Autumn &&
           ((body_length < 30 && season_not_eated >= 5) ||
@@ -63,6 +74,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
       }
     }
     while (bodies.Count > body_length && bodies.Count > 0) {
+      shouldUpdate = true;
       Destroy(bodies.Last.Value.gameObject);
       bodies.RemoveLast();
     }
@@ -77,6 +89,41 @@ public class PlayerBehaviourScript : MonoBehaviour {
     if (body_length <= 0) {
       board.win = true;
     }
+
+    if (shouldUpdate) {
+      int segments = 5;
+      updatePoints(segments);
+      body_renderer.positionCount = body_points.Length;
+      body_renderer.SetPositions(body_points);
+      body_renderer.widthCurve = body_width_curve;
+      // body_renderer.material = body_renderer.GetComponent<SpriteRenderer>().material;
+
+      var edge_center = new Vector2[] {};
+      if (body_points.Length > 3*segments) {
+        edge_center = System.Array.ConvertAll(body_points[(2*segments)..^segments], v => (Vector2)v);
+      }
+      var edge_points = new Vector2[edge_center.Length*4];
+      for (int i = 0, n = edge_center.Length; i < n; i++) {
+        var scale = body_size * 0.3f;
+        edge_points[i] = edge_center[i] + Vector2.up * scale;
+        edge_points[n*2 - i - 1] = edge_center[i] + Vector2.down * scale;
+        edge_points[n*2 + i] = edge_center[i] + Vector2.left * scale;
+        edge_points[n*4 - i - 1] = edge_center[i] + Vector2.right * scale;
+      }
+      body_renderer.GetComponent<EdgeCollider2D>().points = edge_points;
+      body_renderer.GetComponent<EdgeCollider2D>().isTrigger = edge_points.Length == 0;
+      Debug.Log($"updated: {body_points.Length} points");
+    }
+
+    // for (var p = bodies.First; p != null && p.Next != null; p = p.Next) {
+    //   Debug.DrawLine(p.Value.GetComponent<BodyBehaviourScript>().keyPoint, p.Next.Value.GetComponent<BodyBehaviourScript>().keyPoint, Color.white, 0.1f, false);
+    // }
+    // for (var i = 0; i < body_points.Length-1; i++) {
+    //   Debug.DrawLine(body_points[i]+Vector3.up*0.3f, body_points[i+1]+Vector3.up*0.3f, Color.red, 0.1f, false);
+    //   Debug.DrawLine(body_points[i]+Vector3.down*0.3f, body_points[i+1]+Vector3.down*0.3f, Color.red, 0.1f, false);
+    //   Debug.DrawLine(body_points[i]+Vector3.left*0.3f, body_points[i+1]+Vector3.left*0.3f, Color.red, 0.1f, false);
+    //   Debug.DrawLine(body_points[i]+Vector3.right*0.3f, body_points[i+1]+Vector3.right*0.3f, Color.red, 0.1f, false);
+    // }
   }
 
   bool shouldStuck() {
@@ -87,6 +134,40 @@ public class PlayerBehaviourScript : MonoBehaviour {
     return board.stuck;
   }
 
+  void updatePoints(int segments = 5) {
+    var points = new List<Vector3>();
+    var curveX = new AnimationCurve();
+    var curveY = new AnimationCurve();
+    var curveZ = new AnimationCurve();
+    body_width_curve = new AnimationCurve();
+    curveX.AddKey(0, transform.position.x);
+    curveY.AddKey(0, transform.position.y);
+    curveZ.AddKey(0, transform.position.z);
+    body_width_curve.AddKey(0, body_size * 0.8f);
+    var t = 1;
+    for (var p = bodies.First; p != null; p = p.Next) {
+      var point = p.Value.GetComponent<BodyBehaviourScript>().keyPoint;
+      if (p == bodies.First) { point = p.Value.position; }
+      curveX.AddKey(t, point.x);
+      curveY.AddKey(t, point.y);
+      curveZ.AddKey(t, point.z);
+      body_width_curve.AddKey((float)t / Mathf.Min(bodies.Count, 1), p.Value.localScale.x * 0.8f);
+      t++;
+    }
+    for (int i = 0; i < t; i++) {
+      curveX.SmoothTangents(i, 0);
+      curveY.SmoothTangents(i, 0);
+      curveZ.SmoothTangents(i, 0);
+    }
+
+    for (int i = 0; i < t * segments; i++) {
+      float time = (float)i/segments;
+      points.Add(new Vector3(curveX.Evaluate(time), curveY.Evaluate(time), curveZ.Evaluate(time)));
+    }
+
+    body_points = points.ToArray();
+  }
+
   bool shouldExpand() {
     if (body_length <= 0) { return false; }
     if (bodies.Count == 0) { return true; }
@@ -94,14 +175,14 @@ public class PlayerBehaviourScript : MonoBehaviour {
   }
 
   void Expand() {
-    var body_section = Instantiate(body_base, transform.position, Quaternion.identity, transform.parent);
-    body_section.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0.2f, 0.4f, 0.5f, 1, 0.5f, 1);
-    body_section.gameObject.name = "Body";
-    body_section.gameObject.SetActive(true);
-    if (bodies.First != null) {
-      bodies.First.Value.GetComponent<Collider2D>().isTrigger = false;
-    }
-    bodies.AddFirst(body_section);
+    var joint = Instantiate(joint_base, transform.position, Quaternion.identity, transform.parent);
+    joint.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0.2f, 0.4f, 0.5f, 1, 0.5f, 1);
+    joint.gameObject.name = "Joint";
+    joint.gameObject.SetActive(true);
+    // if (bodies.First != null) {
+    //   bodies.First.Value.GetComponent<Collider2D>().isTrigger = false;
+    // }
+    bodies.AddFirst(joint);
     expanded += 1;
     last_expanded = Time.time;
     board.stuck = false;
@@ -144,12 +225,12 @@ public class PlayerBehaviourScript : MonoBehaviour {
     transform.position = bodies.Last.Value.position;
     Destroy(bodies.Last.Value.gameObject);
     bodies.RemoveLast();
-    if (bodies.First != null) {
-      bodies.First.Value.GetComponent<Collider2D>().isTrigger = true;
-    }
-    if (bodies.Last != null) {
-      bodies.Last.Value.GetComponent<Collider2D>().isTrigger = false;
-    }
+    // if (bodies.First != null) {
+    //   bodies.First.Value.GetComponent<Collider2D>().isTrigger = true;
+    // }
+    // if (bodies.Last != null) {
+    //   bodies.Last.Value.GetComponent<Collider2D>().isTrigger = false;
+    // }
     var newList = new LinkedList<Transform>();
     while (bodies.Count != 0) {
       newList.AddFirst(bodies.First.Value);
