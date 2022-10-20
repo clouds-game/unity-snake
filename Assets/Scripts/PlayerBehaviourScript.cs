@@ -207,9 +207,9 @@ public class PlayerBehaviourScript : MonoBehaviour {
     joint.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0.2f, 0.4f, 0.5f, 1, 0.5f, 1);
     joint.gameObject.name = "Joint";
     joint.gameObject.SetActive(true);
-    // if (bodies.First != null) {
-    //   bodies.First.Value.GetComponent<Collider2D>().isTrigger = false;
-    // }
+    if (bodies.First != null) {
+      bodies.First.Value.GetComponent<Collider2D>().isTrigger = false;
+    }
     bodies.AddFirst(joint);
     expanded += 1;
     last_expanded = Time.time;
@@ -253,12 +253,12 @@ public class PlayerBehaviourScript : MonoBehaviour {
     transform.position = bodies.Last.Value.position;
     Destroy(bodies.Last.Value.gameObject);
     bodies.RemoveLast();
-    // if (bodies.First != null) {
-    //   bodies.First.Value.GetComponent<Collider2D>().isTrigger = true;
-    // }
-    // if (bodies.Last != null) {
-    //   bodies.Last.Value.GetComponent<Collider2D>().isTrigger = false;
-    // }
+    if (bodies.First != null) {
+      bodies.First.Value.GetComponent<Collider2D>().isTrigger = true;
+    }
+    if (bodies.Last != null) {
+      bodies.Last.Value.GetComponent<Collider2D>().isTrigger = false;
+    }
     var newList = new LinkedList<Transform>();
     while (bodies.Count != 0) {
       newList.AddFirst(bodies.First.Value);

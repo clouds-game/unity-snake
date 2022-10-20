@@ -18,20 +18,22 @@ public class UiBehaviourScript : MonoBehaviour {
   SortedSet<int> played = new SortedSet<int>();
   static string[] dialogText = new string[] {
     // Spring 0,1
-    "我沉眠了多久，真是陌生的世界啊，我要长大一点去探索。",
-    "吃这个小球就可以成长了吧，小心点不要咬到自己呢。",
+    "我沉眠了多久，真是陌生的世界啊。",
+    "也许该吃点什么，小心点不要咬到自己呢。",
     // Summer 2,3
     "越来越热了，我能借着这个灵气修炼吗？",
-    "我好像记得，前世的目标是化龙来着，也不知道这一世能不能完成。",
+    "好像记得，前世的目标是化龙来着，也不知道这一世能不能完成。",
     // Autumn 4,5,6
     "灵力好像溢出了，吃点仙草精炼一下吧。",
-    "好像吃了身体都变轻快了一些呢。",
+    "真好吃，身体都变轻快了一些呢。",
     "忽然想这些散落的果实不会也是我灵力溢出凝结出来的吧。",
     // Winter 7,8
     "好冷啊，这就是世界的终焉吗。",
     "如果燃烧自己能让世界重新温暖起来吗。",
     // Spring 2 9
     "终于熬过来了，又是熟悉美好的绿色世界。",
+    // Stuck 10
+    "冻住了吗，再不挣扎就又要沉眠了。",
     // End 10,11,12
     "我又回到了最初的大小，这个世界也稳定了下来。",
     "这循环的，就叫四季吧。话说回来我成功化龙了吗？",
@@ -59,20 +61,17 @@ public class UiBehaviourScript : MonoBehaviour {
     checkPlaying();
 
     if (board.win) {
-      var text = popup.transform.Find("Text").GetComponent<TextMeshProUGUI>();
-      text.text = "You WIN!";
-      text.color = Color.yellow;
-      popup.transform.Find("Hint").GetComponent<TextMeshProUGUI>().text = "";
+      popup.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui_win");
       popup.SetActive(true);
-      playDialog(new int[] { 10, 11, 12 });
-    // } else if (board.stuck) {
-    //   var text = popup.transform.Find("Text").GetComponent<TextMeshProUGUI>();
-    //   text.text = "Maybe dead";
-    //   text.color = Color.red;
-    //   popup.transform.Find("Hint").GetComponent<TextMeshProUGUI>().text = "press w/s/a/d to continue, space to restart";
-    //   popup.SetActive(true);
+      playDialog(new int[] { 11, 12, 13 });
+    } else if (board.stuck) {
+      playDialog(new int[] { 10 });
+      if (played.Contains(10) && playing_end <= Time.time) {
+        popup.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui_lose");
+        popup.SetActive(true);
+      }
     } else {
-      // popup.SetActive(false);
+      popup.SetActive(false);
     }
 
     // tips
@@ -108,6 +107,9 @@ public class UiBehaviourScript : MonoBehaviour {
     // Season
     switch (board.season) {
       case Season.Spring:
+        GameObject.Find("Canvas/Season/Summer").GetComponent<Image>().sprite = seasonIcons[1];
+        GameObject.Find("Canvas/Season/Autumn").GetComponent<Image>().sprite = seasonIcons[2];
+        GameObject.Find("Canvas/Season/Winter").GetComponent<Image>().sprite = seasonIcons[3];
         GameObject.Find("Canvas/Season/Spring").GetComponent<Image>().sprite = seasonIcons[4];
         background.sprite = bgImages[0];
         if (board.year == 1) playDialog(new int[] { 0, 1 });
@@ -164,7 +166,7 @@ public class UiBehaviourScript : MonoBehaviour {
     if (playing < 0) {
       return;
     }
-    if (Input.GetKey(KeyCode.Space) || Time.time >= playing_end) {
+    if (Input.GetKeyDown(KeyCode.Space) || Time.time >= playing_end) {
       dialog.SetActive(false);
       playing = -1;
     }
