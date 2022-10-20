@@ -18,6 +18,8 @@ public class BoardBehaviourScript : MonoBehaviour {
   public Season season { get { return _season; } }
   public bool win { get; set; }
   public bool stuck { get; set; }
+  public bool moved { get; set; }
+  public int reverse_count { get; set; }
   TextMesh seasonText;
 
   // Start is called before the first frame update
@@ -35,6 +37,7 @@ public class BoardBehaviourScript : MonoBehaviour {
       new Vector2(bounds.min.x, bounds.min.y),
     };
     coinBase = transform.Find("CoinBase").GetComponent<CoinBehaviourScript>();
+    reverse_count = 1;
     setSeason(Season.Spring);
   }
 

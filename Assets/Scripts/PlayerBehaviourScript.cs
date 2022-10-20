@@ -20,7 +20,6 @@ public class PlayerBehaviourScript : MonoBehaviour {
   int season_expanded_start = 0;
   int expanded = 0;
   float last_expanded;
-  int reverse_count = 1;
   float body_size {
     get { return transform.localScale.x; }
     set {
@@ -67,6 +66,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
       direction = direction.normalized;
       // transform.rotation = Quaternion.FromToRotation(Vector3.right, direction);
       head.rotation = getRotation(direction); // since the is sprite is left
+      board.moved = true;
     }
     head.velocity = direction * currentSpeed;
     head.angularVelocity = 0;
@@ -140,7 +140,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
       }
       body_renderer.GetComponent<EdgeCollider2D>().points = edge_points;
       body_renderer.GetComponent<EdgeCollider2D>().isTrigger = edge_points.Length == 0;
-      Debug.Log($"updated: {body_points.Length} points");
+      // Debug.Log($"updated: {body_points.Length} points");
     }
 
     // for (var p = bodies.First; p != null && p.Next != null; p = p.Next) {
@@ -246,10 +246,10 @@ public class PlayerBehaviourScript : MonoBehaviour {
   }
 
   bool reverseBody() {
-    if (bodies.Count == 0 || reverse_count == 0) {
+    if (bodies.Count == 0 || board.reverse_count == 0) {
       return false;
     }
-    reverse_count -= 1;
+    board.reverse_count -= 1;
     transform.position = bodies.Last.Value.position;
     Destroy(bodies.Last.Value.gameObject);
     bodies.RemoveLast();
