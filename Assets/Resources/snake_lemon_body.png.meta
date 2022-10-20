@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1b6c41d685afa4fd3a7ab7238caba414
+guid: eac637a1f549148ae8e4d08105fd6d7e
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -119,13 +119,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ui_progress_0
+      name: snake_lemon_body_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 1188
-        width: 802
-        height: 32
+        y: 0
+        width: 124
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -133,20 +133,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 65dc3c1a0a2d449d182533472873fbd5
-      internalID: 2133101881
+      spriteID: 811c189e6ff7f47c5b2ce961d5c7667c
+      internalID: -683103174
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ui_progress_1
+      name: snake_lemon_body_1
       rect:
         serializedVersion: 2
-        x: 0
-        y: 382
-        width: 802
-        height: 32
+        x: 124
+        y: 0
+        width: 124
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +154,71 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 43efc5674bdb847f4b6a6afc3bf71bd8
-      internalID: -741320793
+      spriteID: c49212a14bd204c11bc4bcf92f75a1b9
+      internalID: -646134313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: snake_lemon_body_2
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 0
+        width: 124
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 991e5af62745b4d5b837e8ea77665d0b
+      internalID: -1875007561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: snake_lemon_body_3
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 0
+        width: 124
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa32a4dbf52024266b4304772561b7b7
+      internalID: 792761585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: snake_lemon_body_4
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 0
+        width: 124
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d828e9d8ad6f8403fb3bc9609fefb9e4
+      internalID: 1787372593
       vertices: []
       indices: 
       edges: []
@@ -171,8 +234,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      ui_progress_0: 2133101881
-      ui_progress_1: -741320793
+      snake_lemon_body_2: -1875007561
+      snake_lemon_body_3: 792761585
+      snake_lemon_body_1: -646134313
+      snake_lemon_body_0: -683103174
+      snake_lemon_body_4: 1787372593
   spritePackingTag: 
   pSDRemoveMatte: 0
   userData: 

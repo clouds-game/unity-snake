@@ -143,9 +143,9 @@ public class PlayerBehaviourScript : MonoBehaviour {
       // Debug.Log($"updated: {body_points.Length} points");
     }
 
-    // for (var p = bodies.First; p != null && p.Next != null; p = p.Next) {
-    //   Debug.DrawLine(p.Value.GetComponent<BodyBehaviourScript>().keyPoint, p.Next.Value.GetComponent<BodyBehaviourScript>().keyPoint, Color.white, 0.1f, false);
-    // }
+    for (var p = bodies.First; p != null && p.Next != null; p = p.Next) {
+      Debug.DrawLine(p.Value.GetComponent<BodyBehaviourScript>().keyPoint, p.Next.Value.GetComponent<BodyBehaviourScript>().keyPoint, Color.white, 0.1f, false);
+    }
     // for (var i = 0; i < body_points.Length-1; i++) {
     //   Debug.DrawLine(body_points[i]+Vector3.up*0.3f, body_points[i+1]+Vector3.up*0.3f, Color.red, 0.1f, false);
     //   Debug.DrawLine(body_points[i]+Vector3.down*0.3f, body_points[i+1]+Vector3.down*0.3f, Color.red, 0.1f, false);
@@ -203,8 +203,12 @@ public class PlayerBehaviourScript : MonoBehaviour {
   }
 
   void Expand() {
-    var joint = Instantiate(joint_base, transform.position, Quaternion.identity, transform.parent);
-    joint.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0.2f, 0.4f, 0.5f, 1, 0.5f, 1);
+    var rotation = Quaternion.identity;
+    if (bodies.First != null) {
+      rotation = Quaternion.FromToRotation(Vector3.right, bodies.First.Value.position - transform.position);
+    }
+    var joint = Instantiate(joint_base, transform.position, rotation, transform.parent);
+    // joint.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0.2f, 0.4f, 0.5f, 1, 0.5f, 1);
     joint.gameObject.name = "Joint";
     joint.gameObject.SetActive(true);
     if (bodies.First != null) {

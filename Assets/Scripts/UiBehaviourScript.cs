@@ -29,16 +29,19 @@ public class UiBehaviourScript : MonoBehaviour {
     "忽然想这些散落的果实不会也是我灵力溢出凝结出来的吧。",
     // Winter 7,8
     "好冷啊，这就是世界的终焉吗。",
-    "如果燃烧自己能让世界重新温暖起来吗。",
+    "如果燃烧自己能让世界重新温暖起来的话...",
     // Spring 2 9
     "终于熬过来了，又是熟悉美好的绿色世界。",
     // Stuck 10
     "冻住了吗，再不挣扎就又要沉眠了。",
-    // End 10,11,12
+    // End 11,12,13
     "我又回到了最初的大小，这个世界也稳定了下来。",
     "这循环的，就叫四季吧。话说回来我成功化龙了吗？",
-    "我先睡一会，到了春天，万物就会复苏了。",
+    "我先睡一会，到了来年春天，万物就会复苏了。",
   };
+  static AudioClip[] audioClips;
+  AudioSource audioSource;
+
   // Start is called before the first frame update
   void Start() {
     board = GameObject.Find("/Border").GetComponent<BoardBehaviourScript>();
@@ -53,6 +56,23 @@ public class UiBehaviourScript : MonoBehaviour {
     };
     popup = GameObject.Find("Canvas/Popup"); popup.SetActive(false);
     dialog = GameObject.Find("Canvas/Dialog"); dialog.SetActive(false);
+    audioSource = GetComponent<AudioSource>();
+    audioClips = new AudioClip[] {
+      Resources.Load<AudioClip>("Audio/dialog0"),
+      Resources.Load<AudioClip>("Audio/dialog1"),
+      Resources.Load<AudioClip>("Audio/dialog2"),
+      Resources.Load<AudioClip>("Audio/dialog3"),
+      Resources.Load<AudioClip>("Audio/dialog4"),
+      Resources.Load<AudioClip>("Audio/dialog5"),
+      Resources.Load<AudioClip>("Audio/dialog6"),
+      Resources.Load<AudioClip>("Audio/dialog7"),
+      Resources.Load<AudioClip>("Audio/dialog8"),
+      Resources.Load<AudioClip>("Audio/dialog9"),
+      Resources.Load<AudioClip>("Audio/dialog10"),
+      Resources.Load<AudioClip>("Audio/dialog11"),
+      Resources.Load<AudioClip>("Audio/dialog12"),
+      Resources.Load<AudioClip>("Audio/dialog13"),
+    };
     Debug.Log($"UI: {tips} init ({seasonIcons.Length} sprite loads)");
   }
 
@@ -71,6 +91,7 @@ public class UiBehaviourScript : MonoBehaviour {
         popup.SetActive(true);
       }
     } else {
+      played.Remove(10);
       popup.SetActive(false);
     }
 
@@ -142,7 +163,7 @@ public class UiBehaviourScript : MonoBehaviour {
 
   void playDialog(int[] index) {
     for (int i = 0; i < index.Length; i++) {
-      playDialog(index[i], false);
+      playDialog(index[i], i == 0);
     }
   }
 
@@ -154,11 +175,15 @@ public class UiBehaviourScript : MonoBehaviour {
       // TODO something playing
       return;
     }
-    Debug.Log($"playing dialog {index}");
+    Debug.Log($"playing dialog {index} with clip {audioClips[index]}.");
     playing = index;
     playing_end = Time.time + 5;
     dialog.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = dialogText[index];
     dialog.SetActive(true);
+    var audio = dialog.GetComponent<AudioSource>();
+    audio.clip = audioClips[index];
+    audio.Play();
+    playing_end = Time.time + Mathf.Max(5, audioClips[index].length / audio.pitch);
     played.Add(index);
   }
 
@@ -167,6 +192,7 @@ public class UiBehaviourScript : MonoBehaviour {
       return;
     }
     if (Input.GetKeyDown(KeyCode.Space) || Time.time >= playing_end) {
+      dialog.GetComponent<AudioSource>().Stop();
       dialog.SetActive(false);
       playing = -1;
     }
