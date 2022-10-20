@@ -10,6 +10,8 @@ public class PlayerBehaviourScript : MonoBehaviour {
   Vector3[] body_points = new Vector3[] {};
   BoardBehaviourScript board;
   Rigidbody2D head;
+  Transform tail;
+  Vector3 tail_tail;
   Vector3 last_head;
   int body_length = 5;
   int season_length_start = 5;
@@ -25,6 +27,8 @@ public class PlayerBehaviourScript : MonoBehaviour {
       transform.localScale = Vector3.one * value;
       if (joint_base != null)
         joint_base.localScale = Vector3.one * value;
+      if (tail != null)
+        tail.localScale = Vector3.one * value;
     }
   }
   float speed = 5.0f;
@@ -33,10 +37,19 @@ public class PlayerBehaviourScript : MonoBehaviour {
   void Start() {
     joint_base = transform.parent.Find("JointBase"); joint_base.gameObject.SetActive(false);
     body_renderer = transform.parent.Find("Body").GetComponent<LineRenderer>();
+    tail = transform.parent.Find("Tail"); tail.gameObject.SetActive(false);
     board = transform.parent.parent.gameObject.GetComponent<BoardBehaviourScript>();
     Debug.Log($"Hello world {board}! now: {Time.time}");
     head = GetComponent<Rigidbody2D>();
     body_size = 0.3f;
+  }
+
+  static float getRotation(Vector2 direction) {
+    var angle = Vector2.Angle(Vector2.right, (Vector2)direction);
+    if (direction.y < 0) {
+      angle = 360 - angle;
+    }
+    return angle;
   }
 
   // Update is called once per frame
@@ -52,8 +65,10 @@ public class PlayerBehaviourScript : MonoBehaviour {
     if (Input.GetKey(KeyCode.LeftShift)) { currentSpeed *= 2.0f; }
     if (direction != Vector3.zero) {
       direction = direction.normalized;
+      // transform.rotation = Quaternion.FromToRotation(Vector3.right, direction);
+      head.rotation = getRotation(direction); // since the is sprite is left
     }
-    head.velocity = direction.normalized * currentSpeed;
+    head.velocity = direction * currentSpeed;
     head.angularVelocity = 0;
     if (Vector3.Distance(transform.position, last_head) > 0.2) {
       shouldUpdate = true;
@@ -75,9 +90,22 @@ public class PlayerBehaviourScript : MonoBehaviour {
     }
     while (bodies.Count > body_length && bodies.Count > 0) {
       shouldUpdate = true;
+      tail_tail = bodies.Last.Value.GetComponent<BodyBehaviourScript>().keyPoint;
       Destroy(bodies.Last.Value.gameObject);
       bodies.RemoveLast();
     }
+
+    if (shouldUpdate) {
+      if (bodies.Last != null) {
+        tail.position = bodies.Last.Value.position;
+        tail.rotation = Quaternion.FromToRotation(Vector3.right, tail.position-tail_tail);
+        tail.gameObject.SetActive(true);
+      } else {
+        tail.gameObject.SetActive(false);
+      }
+    }
+    // if (tail_tail != null)
+    //   Debug.DrawLine(tail.position, tail_tail, Color.red, 0.1f, false);
 
     if (!board.stuck && shouldStuck()) {
       board.stuck = true;
