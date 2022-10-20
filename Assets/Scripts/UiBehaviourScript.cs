@@ -30,7 +30,7 @@ public class UiBehaviourScript : MonoBehaviour {
     // Winter 7,8
     "好冷啊，这就是世界的终焉吗。",
     "如果燃烧自己能让世界重新温暖起来的话...",
-    // Spring 2 9
+    // Spring2 9
     "终于熬过来了，又是熟悉美好的绿色世界。",
     // Stuck 10
     "冻住了吗，再不挣扎就又要沉眠了。",
@@ -38,6 +38,22 @@ public class UiBehaviourScript : MonoBehaviour {
     "我又回到了最初的大小，这个世界也稳定了下来。",
     "这循环的，就叫四季吧。话说回来我成功化龙了吗？",
     "我先睡一会，到了来年春天，万物就会复苏了。",
+    // Summer2 14
+    "想要化龙就必须长大吗？",
+    // Autumn2 15
+    "这既视感，我过去真的是条龙也说不定。",
+    // Winter2 16
+    "如果我全身都燃尽了会发生什么，忽然有点期待呢。",
+    // Winter3 17
+    "抱元守一，就差一点了！",
+    // Lose 18
+    "不知道哪里听说: 胜败乃兵家常事，大龙请重新来过。",
+    // Autumn3 19
+    "这错综复杂的迷宫，这是...我自己？",
+    // End2 20
+    "没有想到能在春天化龙，不愧是我！这下终于突破循环了吗？",
+    // Lose 21
+    "...才怪！欢迎回来，让我们继续探险吧！",
   };
   static AudioClip[] audioClips;
   AudioSource audioSource;
@@ -72,6 +88,14 @@ public class UiBehaviourScript : MonoBehaviour {
       Resources.Load<AudioClip>("Audio/dialog11"),
       Resources.Load<AudioClip>("Audio/dialog12"),
       Resources.Load<AudioClip>("Audio/dialog13"),
+      Resources.Load<AudioClip>("Audio/dialog14"),
+      Resources.Load<AudioClip>("Audio/dialog15"),
+      Resources.Load<AudioClip>("Audio/dialog16"),
+      Resources.Load<AudioClip>("Audio/dialog17"),
+      Resources.Load<AudioClip>("Audio/dialog18"),
+      Resources.Load<AudioClip>("Audio/dialog19"),
+      Resources.Load<AudioClip>("Audio/dialog20"),
+      Resources.Load<AudioClip>("Audio/dialog21"),
     };
     Debug.Log($"UI: {tips} init ({seasonIcons.Length} sprite loads)");
   }
@@ -83,14 +107,24 @@ public class UiBehaviourScript : MonoBehaviour {
     if (board.win) {
       popup.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui_win");
       popup.SetActive(true);
-      playDialog(new int[] { 11, 12, 13 });
+      if (board.season == Season.Spring) {
+        playDialog(new int[] { 20 });
+      } else {
+        playDialog(new int[] { 11, 12, 13 });
+      }
     } else if (board.stuck) {
       playDialog(new int[] { 10 });
       if (played.Contains(10) && playing_end <= Time.time) {
         popup.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui_lose");
+        played.Remove(21);
+        playDialog(new int[] { 18 });
         popup.SetActive(true);
       }
     } else {
+      if (played.Contains(18)) {
+        played.Remove(18);
+        playDialog(new int[] { 21 });
+      }
       played.Remove(10);
       popup.SetActive(false);
     }
@@ -140,16 +174,21 @@ public class UiBehaviourScript : MonoBehaviour {
         GameObject.Find("Canvas/Season/Summer").GetComponent<Image>().sprite = seasonIcons[5];
         background.sprite = bgImages[1];
         if (board.year == 1) playDialog(new int[] { 2, 3 });
+        if (board.year == 2) playDialog(new int[] { 14 });
         break;
       case Season.Autumn:
         GameObject.Find("Canvas/Season/Autumn").GetComponent<Image>().sprite = seasonIcons[6];
         background.sprite = bgImages[2];
         if (board.year == 1) playDialog(new int[] { 4, 5, 6 });
+        if (board.year == 2) playDialog(new int[] { 15 });
+        if (board.year == 3) playDialog(new int[] { 19 });
         break;
       case Season.Winter:
         GameObject.Find("Canvas/Season/Winter").GetComponent<Image>().sprite = seasonIcons[7];
         background.sprite = bgImages[3];
         if (board.year == 1) playDialog(new int[] { 7, 8 });
+        if (board.year == 2) playDialog(new int[] { 16 });
+        if (board.year == 3) playDialog(new int[] { 17 });
         break;
     }
 
@@ -188,10 +227,7 @@ public class UiBehaviourScript : MonoBehaviour {
   }
 
   void checkPlaying() {
-    if (playing < 0) {
-      return;
-    }
-    if (Input.GetKeyDown(KeyCode.Space) || Time.time >= playing_end) {
+    if (playing < 0 || Input.GetKeyDown(KeyCode.Space) || Time.time >= playing_end) {
       dialog.GetComponent<AudioSource>().Stop();
       dialog.SetActive(false);
       playing = -1;
