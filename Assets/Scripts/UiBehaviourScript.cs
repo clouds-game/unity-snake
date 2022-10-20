@@ -56,6 +56,7 @@ public class UiBehaviourScript : MonoBehaviour {
     "...才怪！欢迎回来，让我们继续探险吧！",
   };
   static AudioClip[] audioClips;
+  static AudioClip[] bgmClips;
   AudioSource audioSource;
 
   // Start is called before the first frame update
@@ -97,6 +98,12 @@ public class UiBehaviourScript : MonoBehaviour {
       Resources.Load<AudioClip>("Audio/dialog20"),
       Resources.Load<AudioClip>("Audio/dialog21"),
     };
+    bgmClips = new AudioClip[] {
+      Resources.Load<AudioClip>("Audio/bgm_spring"),
+      Resources.Load<AudioClip>("Audio/bgm_summer"),
+      Resources.Load<AudioClip>("Audio/bgm_autumn"),
+      Resources.Load<AudioClip>("Audio/bgm_winter"),
+    };
     Debug.Log($"UI: {tips} init ({seasonIcons.Length} sprite loads)");
   }
 
@@ -129,10 +136,19 @@ public class UiBehaviourScript : MonoBehaviour {
       popup.SetActive(false);
     }
 
+    // cheat
+    if ((board.stuck || board.win) && Input.GetKeyDown("q")) {
+      Debug.Log("win immediately");
+      board.win = !board.win;
+    }
+
     // tips
     var tipsText = "";
     if (!board.moved) {
       tipsText += "移动: WSAD\n";
+    } else if (board.win) {
+      tipsText += "完结撒花\n";
+      tipsText += "复苏: Space\n";
     } else {
       if (!Input.GetKey(KeyCode.LeftShift)) {
         tipsText += "加速: Shift\n";
@@ -144,6 +160,9 @@ public class UiBehaviourScript : MonoBehaviour {
         tipsText += "掉头: Z\n";
       } else if (board.stuck) {
         tipsText += "已经不能掉头了\n";
+      }
+      if (board.stuck && played.Contains(18)) {
+        tipsText += "复苏: Space\n";
       }
       if (board.season == Season.Autumn) {
         tipsText += "不吃球也会长个子哦\n";
@@ -167,18 +186,21 @@ public class UiBehaviourScript : MonoBehaviour {
         GameObject.Find("Canvas/Season/Winter").GetComponent<Image>().sprite = seasonIcons[3];
         GameObject.Find("Canvas/Season/Spring").GetComponent<Image>().sprite = seasonIcons[4];
         background.sprite = bgImages[0];
+        playBGM(bgmClips[0]);
         if (board.year == 1) playDialog(new int[] { 0, 1 });
         if (board.year == 2) playDialog(new int[] { 9 });
         break;
       case Season.Summer:
         GameObject.Find("Canvas/Season/Summer").GetComponent<Image>().sprite = seasonIcons[5];
         background.sprite = bgImages[1];
+        playBGM(bgmClips[1]);
         if (board.year == 1) playDialog(new int[] { 2, 3 });
         if (board.year == 2) playDialog(new int[] { 14 });
         break;
       case Season.Autumn:
         GameObject.Find("Canvas/Season/Autumn").GetComponent<Image>().sprite = seasonIcons[6];
         background.sprite = bgImages[2];
+        playBGM(bgmClips[2]);
         if (board.year == 1) playDialog(new int[] { 4, 5, 6 });
         if (board.year == 2) playDialog(new int[] { 15 });
         if (board.year == 3) playDialog(new int[] { 19 });
@@ -186,6 +208,7 @@ public class UiBehaviourScript : MonoBehaviour {
       case Season.Winter:
         GameObject.Find("Canvas/Season/Winter").GetComponent<Image>().sprite = seasonIcons[7];
         background.sprite = bgImages[3];
+        playBGM(bgmClips[3]);
         if (board.year == 1) playDialog(new int[] { 7, 8 });
         if (board.year == 2) playDialog(new int[] { 16 });
         if (board.year == 3) playDialog(new int[] { 17 });
@@ -197,6 +220,15 @@ public class UiBehaviourScript : MonoBehaviour {
       // popup.transform.Find("Button").GetComponent<Button>().clicked.Invoke();
         SceneManager.LoadScene("SampleScene");
       }
+    }
+  }
+
+  void playBGM(AudioClip clip) {
+    if (audioSource.clip == clip) {
+      return;
+    } else {
+      audioSource.clip = clip;
+      audioSource.Play();
     }
   }
 

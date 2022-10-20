@@ -17,7 +17,8 @@ public class BoardBehaviourScript : MonoBehaviour {
   public int year { get { return _year; } }
   public Season season { get { return _season; } }
   public bool win { get; set; }
-  public bool stuck { get; set; }
+  bool _stuck;
+  public bool stuck { get { return !win && _stuck; } set { _stuck = value; } }
   public bool moved { get; set; }
   public int reverse_count { get; set; }
   TextMesh seasonText;
