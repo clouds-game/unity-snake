@@ -15,6 +15,7 @@ public class UiBehaviourScript : MonoBehaviour {
   Slider progress;
   GameObject popup;
   GameObject dialog;
+  ControlBehaviourScript controller;
   float playing_end;
   int playing = -1;
   SortedSet<int> played = new SortedSet<int>();
@@ -57,8 +58,52 @@ public class UiBehaviourScript : MonoBehaviour {
     // Lose 21
     "...才怪！欢迎回来，让我们继续探险吧！",
   };
-  static AudioClip[] audioClips;
-  static AudioClip[] bgmClips;
+  static AudioClip[] _audioClips;
+  static AudioClip[] audioClips {
+    get {
+      if (_audioClips == null) {
+        _audioClips = new AudioClip[] {
+          Resources.Load<AudioClip>("Audio/dialog0"),
+          Resources.Load<AudioClip>("Audio/dialog1"),
+          Resources.Load<AudioClip>("Audio/dialog2"),
+          Resources.Load<AudioClip>("Audio/dialog3"),
+          Resources.Load<AudioClip>("Audio/dialog4"),
+          Resources.Load<AudioClip>("Audio/dialog5"),
+          Resources.Load<AudioClip>("Audio/dialog6"),
+          Resources.Load<AudioClip>("Audio/dialog7"),
+          Resources.Load<AudioClip>("Audio/dialog8"),
+          Resources.Load<AudioClip>("Audio/dialog9"),
+          Resources.Load<AudioClip>("Audio/dialog10"),
+          Resources.Load<AudioClip>("Audio/dialog11"),
+          Resources.Load<AudioClip>("Audio/dialog12"),
+          Resources.Load<AudioClip>("Audio/dialog13"),
+          Resources.Load<AudioClip>("Audio/dialog14"),
+          Resources.Load<AudioClip>("Audio/dialog15"),
+          Resources.Load<AudioClip>("Audio/dialog16"),
+          Resources.Load<AudioClip>("Audio/dialog17"),
+          Resources.Load<AudioClip>("Audio/dialog18"),
+          Resources.Load<AudioClip>("Audio/dialog19"),
+          Resources.Load<AudioClip>("Audio/dialog20"),
+          Resources.Load<AudioClip>("Audio/dialog21"),
+        };
+      }
+      return _audioClips;
+    }
+  }
+  static AudioClip[] _bgmClips;
+  static AudioClip[] bgmClips {
+    get {
+      if (_bgmClips == null) {
+        _bgmClips = new AudioClip[] {
+          Resources.Load<AudioClip>("Audio/bgm_spring"),
+          Resources.Load<AudioClip>("Audio/bgm_summer"),
+          Resources.Load<AudioClip>("Audio/bgm_autumn"),
+          Resources.Load<AudioClip>("Audio/bgm_winter"),
+        };
+      }
+      return _bgmClips;
+    }
+  }
   AudioSource audioSource;
 
   // Start is called before the first frame update
@@ -79,36 +124,7 @@ public class UiBehaviourScript : MonoBehaviour {
     score = GameObject.Find("Canvas/Score").GetComponent<TextMeshProUGUI>();
     audioSource = GetComponent<AudioSource>();
     audioSource.volume = 0.03f;
-    audioClips = new AudioClip[] {
-      Resources.Load<AudioClip>("Audio/dialog0"),
-      Resources.Load<AudioClip>("Audio/dialog1"),
-      Resources.Load<AudioClip>("Audio/dialog2"),
-      Resources.Load<AudioClip>("Audio/dialog3"),
-      Resources.Load<AudioClip>("Audio/dialog4"),
-      Resources.Load<AudioClip>("Audio/dialog5"),
-      Resources.Load<AudioClip>("Audio/dialog6"),
-      Resources.Load<AudioClip>("Audio/dialog7"),
-      Resources.Load<AudioClip>("Audio/dialog8"),
-      Resources.Load<AudioClip>("Audio/dialog9"),
-      Resources.Load<AudioClip>("Audio/dialog10"),
-      Resources.Load<AudioClip>("Audio/dialog11"),
-      Resources.Load<AudioClip>("Audio/dialog12"),
-      Resources.Load<AudioClip>("Audio/dialog13"),
-      Resources.Load<AudioClip>("Audio/dialog14"),
-      Resources.Load<AudioClip>("Audio/dialog15"),
-      Resources.Load<AudioClip>("Audio/dialog16"),
-      Resources.Load<AudioClip>("Audio/dialog17"),
-      Resources.Load<AudioClip>("Audio/dialog18"),
-      Resources.Load<AudioClip>("Audio/dialog19"),
-      Resources.Load<AudioClip>("Audio/dialog20"),
-      Resources.Load<AudioClip>("Audio/dialog21"),
-    };
-    bgmClips = new AudioClip[] {
-      Resources.Load<AudioClip>("Audio/bgm_spring"),
-      Resources.Load<AudioClip>("Audio/bgm_summer"),
-      Resources.Load<AudioClip>("Audio/bgm_autumn"),
-      Resources.Load<AudioClip>("Audio/bgm_winter"),
-    };
+    controller = GameObject.Find("Mobile").GetComponent<ControlBehaviourScript>();
     Debug.Log($"UI: {tips} init ({seasonIcons.Length} sprite loads)");
   }
 
@@ -154,7 +170,7 @@ public class UiBehaviourScript : MonoBehaviour {
       tipsText += "完结撒花\n";
       tipsText += "复苏: Space\n";
     } else {
-      if (!Input.GetKey(KeyCode.LeftShift)) {
+      if (!Input.GetKey(KeyCode.LeftShift) && !controller.GetKey("Shift")) {
         tipsText += "加速: Shift\n";
       }
       if (board.stuck) {

@@ -32,8 +32,11 @@ public class PlayerBehaviourScript : MonoBehaviour {
   }
   float speed = 5.0f;
 
+  ControlBehaviourScript controller;
+
   // Start is called before the first frame update
   void Start() {
+    controller = GameObject.Find("/UI/Canvas/Mobile").GetComponent<ControlBehaviourScript>();
     joint_base = transform.parent.Find("JointBase"); joint_base.gameObject.SetActive(false);
     body_renderer = transform.parent.Find("Body").GetComponent<LineRenderer>();
     tail = transform.parent.Find("Tail"); tail.gameObject.SetActive(false);
@@ -56,14 +59,19 @@ public class PlayerBehaviourScript : MonoBehaviour {
     bool shouldUpdate = false;
     var currentSpeed = speed;
     var direction = Vector3.zero;
-    if (Input.GetKeyDown("z") && reverseBody()) { return; }
+    if (controller != null && controller.direction != null) {
+      direction = controller.direction;
+    }
+    if ((Input.GetKeyDown("z") || controller.GetKeyUp("Z")) && reverseBody()) { return; }
     if (Input.GetKey("w")) { direction += Vector3.up; }
     if (Input.GetKey("s")) { direction += Vector3.down; }
     if (Input.GetKey("a")) { direction += Vector3.left; }
     if (Input.GetKey("d")) { direction += Vector3.right; }
-    if (Input.GetKey(KeyCode.LeftShift)) { currentSpeed *= 2.0f; }
-    if (direction != Vector3.zero) {
+    if (Input.GetKey(KeyCode.LeftShift) || controller.GetKey("Shift")) { currentSpeed *= 2.0f; }
+    if (direction.sqrMagnitude > 1) {
       direction = direction.normalized;
+    }
+    if (direction != Vector3.zero) {
       // transform.rotation = Quaternion.FromToRotation(Vector3.right, direction);
       head.rotation = getRotation(direction); // since the is sprite is left
       board.moved = true;
