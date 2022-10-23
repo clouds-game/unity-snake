@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public enum ButtonState {
   Release, Down, Hold, Up,
@@ -36,6 +37,8 @@ public class ControlBehaviourScript : MonoBehaviour {
 	GameObject rightPanel;
   GameObject joyBase;
   GameObject joyCursor;
+  TextMeshProUGUI debugInfo;
+  string debugText = "";
 
   float enableTimeout = -1;
   int trackedLeftId = int.MinValue;
@@ -55,8 +58,8 @@ public class ControlBehaviourScript : MonoBehaviour {
       ButtonInput.init("Z", KeyCode.Z, "Right/Button_Key_Z"),
       ButtonInput.init("Shift", KeyCode.LeftShift, "Right/Button_Key_Shift"),
     };
-    joyBase.SetActive(false);
-    rightPanel.SetActive(false);
+    debugInfo = GameObject.Find("DebugInfo").GetComponent<TextMeshProUGUI>();
+    ActiveControl(false);
     Debug.Log($"{buttons} => {buttons[0]} => {buttons[0].ui};");
   }
 
@@ -67,6 +70,7 @@ public class ControlBehaviourScript : MonoBehaviour {
         buttons[i].release();
       }
     }
+    debugText = "";
     if (Input.GetMouseButtonDown(0)) {
       OnTouch(-1, Input.mousePosition, TouchPhase.Began);
     }
@@ -80,10 +84,17 @@ public class ControlBehaviourScript : MonoBehaviour {
       var touch = Input.GetTouch(i);
       OnTouch(touch.fingerId, touch.position, touch.phase);
     }
+    debugInfo.text = debugText;
 
     if (enableTimeout == -1 || (enableTimeout != 0 && Time.time > enableTimeout)) {
-       joyBase.SetActive(false);  rightPanel.SetActive(false);
+      ActiveControl(false);
     }
+  }
+
+  void ActiveControl(bool active) {
+    joyBase.SetActive(active);
+    rightPanel.SetActive(active);
+    debugInfo.gameObject.SetActive(active);
   }
 
 
@@ -128,13 +139,13 @@ public class ControlBehaviourScript : MonoBehaviour {
   }
 
   void OnTouch(int fingerId, Vector2 position, TouchPhase phase) {
+    debugText += $"{fingerId}: {position} {phase}\n";
     // Debug.Log($"touch {position} {phase}");
     if (checkPosition(position, leftPanel)) {
-      if (phase == TouchPhase.Began && !joyBase.activeSelf) {
+      if (phase == TouchPhase.Began && trackedLeftId == int.MinValue) {
         joyBase.transform.position = position;
         trackedLeftId = fingerId;
-        joyBase.SetActive(true);
-        rightPanel.SetActive(true);
+        ActiveControl(true);
       }
     }
     if (fingerId == trackedLeftId) {
@@ -145,8 +156,9 @@ public class ControlBehaviourScript : MonoBehaviour {
         case TouchPhase.Moved:
           // TODO: check id
           var relative = position - (Vector2)joyBase.transform.position;
-          var radius = joyBase.GetComponent<RectTransform>().rect.size.magnitude / Mathf.Sqrt(2) / 2;
-          var radius2 = joyCursor.GetComponent<RectTransform>().rect.size.magnitude / Mathf.Sqrt(2) / 2;
+          // the sprite size is larger than rect
+          var radius = joyBase.GetComponent<RectTransform>().rect.size.magnitude / Mathf.Sqrt(2);
+          var radius2 = joyCursor.GetComponent<RectTransform>().rect.size.magnitude / Mathf.Sqrt(2);
           radius -= radius2;
           _direction = relative / radius;
           if (_direction.magnitude > 1) {
