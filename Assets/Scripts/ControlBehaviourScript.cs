@@ -58,7 +58,7 @@ public class ControlBehaviourScript : MonoBehaviour {
       ButtonInput.init("Z", KeyCode.Z, "Right/Button_Key_Z"),
       ButtonInput.init("Shift", KeyCode.LeftShift, "Right/Button_Key_Shift"),
     };
-    debugInfo = GameObject.Find("DebugInfo").GetComponent<TextMeshProUGUI>();
+    var debugInfo = GameObject.Find("DebugInfo"); debugInfo.SetActive(false);
     ActiveControl(false);
     Debug.Log($"{buttons} => {buttons[0]} => {buttons[0].ui};");
   }
@@ -70,21 +70,23 @@ public class ControlBehaviourScript : MonoBehaviour {
         buttons[i].release();
       }
     }
-    debugText = "";
-    if (Input.GetMouseButtonDown(0)) {
-      OnTouch(-1, Input.mousePosition, TouchPhase.Began);
-    }
-    if (Input.GetMouseButton(0)) {
-      OnTouch(-1, Input.mousePosition, TouchPhase.Moved);
-    }
-    if (Input.GetMouseButtonUp(0)) {
-      OnTouch(-1, Input.mousePosition, TouchPhase.Ended);
+    if (debugInfo != null) debugText = "";
+    if (Input.touchCount == 0) {
+      if (Input.GetMouseButtonDown(0)) {
+        OnTouch(-1, Input.mousePosition, TouchPhase.Began);
+      }
+      if (Input.GetMouseButton(0)) {
+        OnTouch(-1, Input.mousePosition, TouchPhase.Moved);
+      }
+      if (Input.GetMouseButtonUp(0)) {
+        OnTouch(-1, Input.mousePosition, TouchPhase.Ended);
+      }
     }
     for (int i = 0; i < Input.touchCount; i++) {
       var touch = Input.GetTouch(i);
       OnTouch(touch.fingerId, touch.position, touch.phase);
     }
-    debugInfo.text = debugText;
+    if (debugInfo != null) debugInfo.text = debugText;
 
     if (enableTimeout == -1 || (enableTimeout != 0 && Time.time > enableTimeout)) {
       ActiveControl(false);
@@ -94,7 +96,7 @@ public class ControlBehaviourScript : MonoBehaviour {
   void ActiveControl(bool active) {
     joyBase.SetActive(active);
     rightPanel.SetActive(active);
-    debugInfo.gameObject.SetActive(active);
+    if (debugInfo != null) debugInfo.gameObject.SetActive(active);
   }
 
 
@@ -139,7 +141,7 @@ public class ControlBehaviourScript : MonoBehaviour {
   }
 
   void OnTouch(int fingerId, Vector2 position, TouchPhase phase) {
-    debugText += $"{fingerId}: {position} {phase}\n";
+    if (debugInfo != null) debugText += $"{fingerId}: {position} {phase}\n";
     // Debug.Log($"touch {position} {phase}");
     if (checkPosition(position, leftPanel)) {
       if (phase == TouchPhase.Began && trackedLeftId == int.MinValue) {
