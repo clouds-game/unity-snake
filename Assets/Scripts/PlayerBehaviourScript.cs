@@ -43,6 +43,7 @@ public class PlayerBehaviourScript : MonoBehaviour {
     board = transform.parent.parent.gameObject.GetComponent<BoardBehaviourScript>();
     Debug.Log($"Hello world {board}! now: {Time.time}");
     head = GetComponent<Rigidbody2D>();
+    transform.Find("Image").GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(ConfigBehaviourScript.skin_head);
     body_size = 0.3f;
   }
 

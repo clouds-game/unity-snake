@@ -6,12 +6,14 @@ public class BodyBehaviourScript : MonoBehaviour {
   Vector3 _keyPoint;
   public Vector3 keyPoint { get { return transform.position + Vector3.Scale(transform.localScale, _keyPoint); }}
 
+  static string skin_body;
   static Sprite[] bodySprite;
 
   // Start is called before the first frame update
   void Start() {
-    if (bodySprite == null) {
-      bodySprite = Resources.LoadAll<Sprite>("snake_lemon_body");
+    if (ConfigBehaviourScript.skin_body != skin_body) {
+      skin_body = ConfigBehaviourScript.skin_body;
+      bodySprite = Resources.LoadAll<Sprite>(skin_body);
     }
     GetComponent<SpriteRenderer>().sprite = bodySprite[Random.Range(0, bodySprite.Length-1)];
     _keyPoint = randomPoint();

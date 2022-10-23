@@ -241,8 +241,12 @@ public class UiBehaviourScript : MonoBehaviour {
 
     if (popup.activeInHierarchy) {
       if (Input.GetKeyDown(KeyCode.Space)) {
-      // popup.transform.Find("Button").GetComponent<Button>().clicked.Invoke();
+      // popup.transform.Find("ButtonRetry").GetComponent<Button>().clicked.Invoke();
         SceneManager.LoadScene("SampleScene");
+      }
+      if (Input.GetKeyDown(KeyCode.Escape)) {
+      // popup.transform.Find("ButtonExit").GetComponent<Button>().clicked.Invoke();
+        SceneManager.LoadScene("WelcomeScene");
       }
     }
   }
