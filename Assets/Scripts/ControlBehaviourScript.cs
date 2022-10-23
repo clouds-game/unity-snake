@@ -133,17 +133,34 @@ public class ControlBehaviourScript : MonoBehaviour {
   public bool GetKeyUp(KeyCode s) { return checkButton(s, ButtonState.Up); }
   public bool GetKeyUp(string s) { return checkButton(s, ButtonState.Up); }
 
-  static bool checkPosition(Vector2 position, GameObject obj) {
+  public static bool CheckPosition(Vector2 position, GameObject obj) {
     var rect = obj.GetComponent<RectTransform>().rect;
     rect = new Rect((Vector2)obj.transform.position + rect.position, rect.size);
     // Debug.Log($"touch {position} {rect} {obj.transform.position} {obj.name}");
     return rect.Contains(position);
   }
 
+  public static bool CheckPosition(GameObject obj) {
+    if (Input.touchCount == 0) {
+      if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0) || Input.GetMouseButtonUp(0)) {
+        if (CheckPosition(Input.mousePosition, obj)) {
+          return true;
+        }
+      }
+    }
+    for (int i = 0; i < Input.touchCount; i++) {
+      var touch = Input.GetTouch(i);
+      if (CheckPosition(touch.position, obj)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   void OnTouch(int fingerId, Vector2 position, TouchPhase phase) {
     if (debugInfo != null) debugText += $"{fingerId}: {position} {phase}\n";
     // Debug.Log($"touch {position} {phase}");
-    if (checkPosition(position, leftPanel)) {
+    if (CheckPosition(position, leftPanel)) {
       if (phase == TouchPhase.Began && trackedLeftId == int.MinValue) {
         joyBase.transform.position = position;
         trackedLeftId = fingerId;
@@ -183,14 +200,14 @@ public class ControlBehaviourScript : MonoBehaviour {
       if (!button.ui.IsActive()) {
         continue;
       }
-      if (checkPosition(position, button.ui.gameObject)) {
+      if (CheckPosition(position, button.ui.gameObject)) {
         if (phase == TouchPhase.Began && button.fingerId == int.MinValue) {
           button.fingerId = fingerId;
         }
       }
       if (fingerId == button.fingerId) {
         enableTimeout = Time.time + 3;
-        button.active = checkPosition(position, button.ui.gameObject);
+        button.active = CheckPosition(position, button.ui.gameObject);
         switch (phase) {
           case TouchPhase.Began:
             button.state = ButtonState.Down;

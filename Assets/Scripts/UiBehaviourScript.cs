@@ -14,6 +14,8 @@ public class UiBehaviourScript : MonoBehaviour {
   Sprite[] bgImages;
   Slider progress;
   GameObject popup;
+  GameObject popupButtonRetry;
+  GameObject popupButtonExit;
   GameObject dialog;
   ControlBehaviourScript controller;
   float playing_end;
@@ -118,6 +120,8 @@ public class UiBehaviourScript : MonoBehaviour {
       Resources.Load<Sprite>("bg_autumn"),
       Resources.Load<Sprite>("bg_winter"),
     };
+    popupButtonRetry = GameObject.Find("Canvas/Popup/ButtonRetry");
+    popupButtonExit = GameObject.Find("Canvas/Popup/ButtonExit");
     popup = GameObject.Find("Canvas/Popup"); popup.SetActive(false);
     dialog = GameObject.Find("Canvas/Dialog"); dialog.SetActive(false);
     progress = GameObject.Find("Canvas/Season/Progress").GetComponent<Slider>();
@@ -240,11 +244,11 @@ public class UiBehaviourScript : MonoBehaviour {
     }
 
     if (popup.activeInHierarchy) {
-      if (Input.GetKeyDown(KeyCode.Space)) {
+      if (Input.GetKeyDown(KeyCode.Space) || ControlBehaviourScript.CheckPosition(popupButtonRetry)) {
       // popup.transform.Find("ButtonRetry").GetComponent<Button>().clicked.Invoke();
         SceneManager.LoadScene("SampleScene");
       }
-      if (Input.GetKeyDown(KeyCode.Escape)) {
+      if (Input.GetKeyDown(KeyCode.Escape) || ControlBehaviourScript.CheckPosition(popupButtonExit)) {
       // popup.transform.Find("ButtonExit").GetComponent<Button>().clicked.Invoke();
         SceneManager.LoadScene("WelcomeScene");
       }
